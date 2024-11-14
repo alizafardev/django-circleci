@@ -1,0 +1,32 @@
+version: 2.1
+
+jobs:
+  test:
+    docker:
+      # Define the primary Docker image with Python and any other necessary services.
+      - image: circleci/python:3.10
+      - image: circleci/postgres:13
+        environment:
+          POSTGRES_USER: myuser
+          POSTGRES_DB: mydb
+          POSTGRES_PASSWORD: mypass
+    steps:
+      - checkout # Checkout the code from repository.
+      - run:
+          name: Install dependencies
+          command: |
+            python -m venv venv
+            . venv/bin/activate
+            pip install -r requrirements.txt
+      - run:
+          name: Run Django Tests
+          command: |
+            . venv/bin/activate
+            python manage.py migrate
+            python manage.py test
+workflows:
+  version: 2
+  test:
+    jobs:
+      - test
+          
